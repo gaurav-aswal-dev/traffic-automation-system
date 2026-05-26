@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Traffic Simulation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="glass-panel header">
+            <div class="logo">
+                <span class="icon">🚦</span>
+                <h1>Smart Traffic Sim</h1>
+            </div>
+            <div class="global-stats">
+                <div class="stat-badge">
+                    <span class="label">Time</span>
+                    <span class="value" id="currentTime">--:--:--</span>
+                </div>
+                <div class="stat-badge">
+                    <span class="label">Total Cars</span>
+                    <span class="value" id="cars">0</span>
+                </div>
+                <div class="stat-badge">
+                    <span class="label">Ambulances</span>
+                    <span class="value emergency" id="ambulances">0</span>
+                </div>
+                <div class="stat-badge">
+                    <span class="label">Green Timer</span>
+                    <span class="value" id="timeLeft" style="color:#10b981;">5s</span>
+                </div>
+                <div class="stat-badge">
+                    <span class="label">Status</span>
+                    <span class="value status-running" id="simStatus">Running</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <section class="glass-panel canvas-wrapper">
+                <canvas id="canvas"></canvas>
+            </section>
+
+            <aside class="sidebar">
+                <div class="glass-panel control-card">
+                    <h2>🎮 Simulation Controls</h2>
+                    <div class="button-group">
+                        <button id="startBtn" class="btn btn-primary">⏸ Pause</button>
+                        <button id="stepBtn" class="btn btn-secondary">⏭ Step</button>
+                    </div>
+                    <div class="slider-group">
+                        <label for="speedSlider">Vehicle Speed: <span id="speedValue" class="highlight">1.0x</span></label>
+                        <input type="range" id="speedSlider" min="0.25" max="3" step="0.25" value="1" class="slider">
+                    </div>
+                </div>
+
+                <div class="glass-panel control-card">
+                    <h2>🚥 Traffic Control</h2>
+                    <div class="light-indicator">
+                        <span class="label">Active Green Lane:</span>
+                        <span class="active-lane" id="currentGreen">NORTH</span>
+                    </div>
+                    <div class="light-indicator" style="margin-top:8px;">
+                        <span class="label">⏱ Green Timer:</span>
+                        <span class="active-lane" id="timeLeft-sidebar" style="color:#10b981;">5s</span>
+                    </div>
+                    <button id="cycleLightBtn" class="btn btn-warning">🔄 Manual Cycle</button>
+                </div>
+
+                <div class="glass-panel control-card">
+                    <h2>Priority</h2>
+                    <div class="priority-summary">
+                        <div>
+                            <span>Top Lane</span>
+                            <strong id="priorityLeader">Balanced</strong>
+                        </div>
+                        <p id="priorityReason">No waiting traffic</p>
+                    </div>
+                    <div id="priorityList" class="priority-list"></div>
+                </div>
+
+                <template id="priorityRowTemplate">
+                    <div class="priority-row">
+                        <div class="priority-row-header">
+                            <div class="priority-title">
+                                <span class="priority-rank"></span>
+                                <span class="priority-lane"></span>
+                                <span class="priority-state"></span>
+                            </div>
+                            <strong class="priority-score"></strong>
+                        </div>
+                        <div class="priority-bar">
+                            <span class="priority-fill"></span>
+                        </div>
+                        <div class="priority-metrics">
+                            <span><strong data-priority-value="vehicles">0</strong> Vehicles</span>
+                            <span><strong data-priority-value="ambulances">0</strong> Ambulances</span>
+                            <span><strong data-priority-value="blocked">0</strong> Blocking</span>
+                            <span><strong data-priority-value="wait">0s</strong> Wait</span>
+                        </div>
+                        <div class="priority-row-reason"></div>
+                    </div>
+                </template>
+
+                <div class="glass-panel control-card">
+                    <h2>📊 Queue Lengths</h2>
+                    <div class="lane-stats-grid">
+                        <div class="lane-stat"><span>North</span><strong id="northCount">0</strong></div>
+                        <div class="lane-stat"><span>South</span><strong id="southCount">0</strong></div>
+                        <div class="lane-stat"><span>East</span><strong id="eastCount">0</strong></div>
+                        <div class="lane-stat"><span>West</span><strong id="westCount">0</strong></div>
+                    </div>
+                </div>
+
+                <div class="glass-panel control-card">
+                    <h2>🚀 Dispatch Vehicle</h2>
+                    <div class="dispatch-controls">
+                        <select id="type" class="glass-input">
+                            <option value="car">🚗 Car</option>
+                            <option value="ambulance">🚑 Ambulance</option>
+                        </select>
+                        <select id="lane" class="glass-input">
+                            <option value="north">North Lane</option>
+                            <option value="south">South Lane</option>
+                            <option value="east">East Lane</option>
+                            <option value="west">West Lane</option>
+                        </select>
+                    </div>
+                    <button onclick="addVehicle()" class="btn btn-success">Dispatch Now</button>
+                    <div id="feedback" class="feedback"></div>
+                </div>
+            </aside>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
